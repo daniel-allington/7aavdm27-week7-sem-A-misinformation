@@ -1,0 +1,17 @@
+---
+title: "Misinformation analysis for 7AAVDM59 week 7 seminar A"
+author: "Daniel Allington"
+date: "2024-03-07"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(dplyr)
+library(readr)
+
+misinfo_d <- read_csv('../data/life-under-lockdown-wave2-extract.csv')
+```
+
+
