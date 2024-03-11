@@ -2,7 +2,9 @@
 title: "Misinformation analysis for 7AAVDM59 week 7 seminar A"
 author: "Daniel Allington"
 date: "2024-03-07"
-output: html_document
+output:
+  html_document: default
+  word_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -10,8 +12,81 @@ knitr::opts_chunk$set(echo = TRUE)
 
 library(dplyr)
 library(readr)
+library(ggplot2)
+
+options(scipen = 999)
 
 misinfo_d <- read_csv('../data/life-under-lockdown-wave2-extract.csv')
 ```
+
+```{r}
+misinfo_d %>%
+  ggplot(aes(x = beliefs)) +
+  geom_histogram(bins = 6)
+```
+
+```{r}
+misinfo_d %>%
+  ggplot(aes(x = gender)) +
+  geom_bar()
+```
+
+# Association between gender and number of misinformation beliefs
+```{r}
+misinfo_d %>%
+  filter(gender %in% c('Female', 'Male')) %>%
+  t.test(formula = beliefs ~ gender, data = .)
+```
+
+In the sample, males had more misinformation beliefs (0.73) than females (0.61), but Welch's two sample t-test confirms that this difference was not statistically significant, t(484.31) = -1.201, p = 0.230.
+
+# Association between age and number of misinformation beliefs
+## Hypothesis
+We expect a positive correlation between age and number of misinformation beliefs.
+
+## Methodology
+To test the hypothesis, the product-moment coefficient of correlation between age and number of misinformation beliefs was calculated.
+
+## Findings
+```{r}
+misinfo_d %>%
+  ggplot(aes(x = age, y = beliefs)) +
+  geom_jitter()
+```
+
+```{r}
+misinfo_d %>%
+  cor.test(
+    formula = ~ age + beliefs, data = ., method = 'pearson')
+```
+
+There is a statistically significant moderate negative correlation between age and number of misinformation beliefs, r(498) = -.24, p < .001.
+
+# Association between reliance on Facebook for information about coronavirus and number of misinformation beliefs
+## Hypothesis
+We expect a positive correlation between amount of knowledge about coronavirus which comes from Facebook and number of misinformation beliefs.
+
+## Methodology
+To test the hypothesis, the rank-order coefficient of correlation between amount of knowledge about coronavirus and number of misinformation beliefs was calculated.
+
+## Findings
+```{r}
+misinfo_d <- misinfo_d %>%
+  mutate(
+    know_facebook_coded = know_facebook %>%
+      recode(
+        "Nothing at all" = 0,
+        "Not very much" = 1,
+        "A fair amount" = 2,
+        "A great deal" = 3
+      )
+  )
+
+misinfo_d %>%
+  cor.test(
+    formula = ~ know_facebook_coded + beliefs, data = ., method = 'spearman')
+```
+
+There was a statistically significant positive rank-order correlation between amount of knowledge about coronavirus from Facebook and number of misinformation beliefs, rs(498) = .23, p < .001.
 
 
