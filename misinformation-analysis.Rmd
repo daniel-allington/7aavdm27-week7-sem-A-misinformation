@@ -89,4 +89,18 @@ misinfo_d %>%
 
 There was a statistically significant positive rank-order correlation between amount of knowledge about coronavirus from Facebook and number of misinformation beliefs, rs(498) = .23, p < .001.
 
+# Association between age and misinformation beliefs, controlling for reliance on Facebook for information
+```{r}
+misinfo_d <- misinfo_d %>%
+  mutate(
+    know_facebook_binary = as.numeric(know_facebook_coded == 3)
+  )
+
+misinfo_d %>%
+  lm(
+    formula = beliefs ~ age + know_facebook_binary, data = .
+  )
+
+```
+
 
